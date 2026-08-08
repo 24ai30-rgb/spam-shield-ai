@@ -1,0 +1,270 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =========================================================
+   ROOT FONTS
+========================================================= */
+
+:root {
+  --font-space-grotesk: "Space Grotesk", sans-serif;
+  --font-inter: "Inter", sans-serif;
+  --font-jetbrains-mono: "JetBrains Mono", monospace;
+}
+
+/* =========================================================
+   BASE
+========================================================= */
+
+@layer base {
+  body {
+    @apply bg-paper text-void-900 font-body antialiased;
+  }
+
+  .dark body {
+    @apply bg-void-900 text-paper;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display tracking-tight;
+  }
+}
+
+/* =========================================================
+   COMPONENTS
+========================================================= */
+
+@layer components {
+  .card {
+  @apply rounded-2xl border border-white/10 bg-[#0B1220]/80
+    shadow-lg backdrop-blur-xl
+    transition-all duration-300
+    hover:border-beacon-500/30
+    hover:bg-[#0B1220];
+}
+.card p {
+  @apply text-fog-300;
+}
+
+.card h3,
+.card h4 {
+  @apply text-paper;
+}
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl
+      bg-beacon-500 px-5 py-2.5 font-semibold text-void-950
+      transition duration-300
+      hover:bg-beacon-400
+      active:scale-[0.98];
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl
+      border border-fog-300/30 px-5 py-2.5 font-semibold
+      text-current transition duration-300
+      hover:bg-void-900/5
+      dark:hover:bg-white/5;
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1.5 rounded-full
+      px-3 py-1 text-xs font-semibold;
+  }
+
+  .badge-safe {
+    @apply bg-signal-500/15 text-signal-600 dark:text-signal-500;
+  }
+
+  .badge-suspicious {
+    @apply bg-beacon-500/15 text-beacon-600 dark:text-beacon-400;
+  }
+
+  .badge-high_risk {
+    @apply bg-amberrisk/15 text-amberrisk;
+  }
+
+  .badge-confirmed_scam {
+    @apply bg-alert-500/15 text-alert-500;
+  }
+}
+
+/* =========================================================
+   SCROLLBAR
+========================================================= */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply rounded-full bg-fog-400/30;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* =========================================================
+   CYBER SECURITY BACKGROUND
+========================================================= */
+
+.bg-radar {
+  position: relative;
+
+  background:
+    /* Main blue glow */
+    radial-gradient(
+      circle at 50% 45%,
+      rgba(0, 180, 255, 0.13) 0%,
+      transparent 35%
+    ),
+
+    /* Green glow */
+    radial-gradient(
+      circle at 20% 20%,
+      rgba(0, 255, 180, 0.08) 0%,
+      transparent 25%
+    ),
+
+    /* Purple glow */
+    radial-gradient(
+      circle at 85% 70%,
+      rgba(120, 70, 255, 0.08) 0%,
+      transparent 30%
+    ),
+
+    /* Vertical grid */
+    linear-gradient(
+      rgba(0, 150, 255, 0.055) 1px,
+      transparent 1px
+    ),
+
+    /* Horizontal grid */
+    linear-gradient(
+      90deg,
+      rgba(0, 150, 255, 0.055) 1px,
+      transparent 1px
+    );
+
+  background-size:
+    auto,
+    auto,
+    auto,
+    45px 45px,
+    45px 45px;
+
+  animation: cyberGrid 18s linear infinite;
+}
+
+/* =========================================================
+   CYBER GRID ANIMATION
+========================================================= */
+
+@keyframes cyberGrid {
+  0% {
+    background-position:
+      center,
+      center,
+      center,
+      0 0,
+      0 0;
+  }
+
+  50% {
+    background-position:
+      center,
+      center,
+      center,
+      22px 22px,
+      22px 22px;
+  }
+
+  100% {
+    background-position:
+      center,
+      center,
+      center,
+      45px 45px,
+      45px 45px;
+  }
+}
+
+/* =========================================================
+   CYBER GLOW ANIMATION
+========================================================= */
+
+@keyframes cyberGlow {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.8;
+    transform: scale(1.08);
+  }
+}
+
+/* =========================================================
+   FLOATING CYBER EFFECT
+========================================================= */
+
+@keyframes cyberFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+/* =========================================================
+   RADAR SPIN
+========================================================= */
+
+@keyframes radarSpin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================================
+   UTILITY ANIMATION CLASSES
+========================================================= */
+
+.cyber-glow {
+  animation: cyberGlow 4s ease-in-out infinite;
+}
+
+.cyber-float {
+  animation: cyberFloat 5s ease-in-out infinite;
+}
+
+.radar-spin {
+  animation: radarSpin 8s linear infinite;
+}
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .bg-radar,
+  .cyber-glow,
+  .cyber-float,
+  .radar-spin {
+    animation: none;
+  }
+}
