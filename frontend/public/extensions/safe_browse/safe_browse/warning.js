@@ -1,5 +1,5 @@
 // EDIT THIS: your own website, shown as the safe alternative destination
-const HOME_SITE_URL = "http://localhost:3000/upload";
+const HOME_SITE_URL = "https://spam-shield-ai-2.onrender.com/upload";
 const HOME_SITE_LABEL = "Analyze the risk of the URL"; // shown on the button
 
 const params = new URLSearchParams(window.location.search);
