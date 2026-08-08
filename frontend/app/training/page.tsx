@@ -1,5 +1,5 @@
-// app/training/page.tsx
 "use client";
+
 import jsPDF from "jspdf";
 import { useMemo, useState } from "react";
 import {
@@ -25,10 +25,12 @@ import {
 
 function shuffleArray<T>(array: T[]): T[] {
   const result = [...array];
+
   for (let i = result.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [result[i], result[j]] = [result[j], result[i]];
   }
+
   return result;
 }
 
@@ -44,6 +46,7 @@ function getBadge(percentage: number): {
       glow: "shadow-[0_0_30px_rgba(74,222,128,0.35)]",
     };
   }
+
   if (percentage >= 70) {
     return {
       label: "Good",
@@ -51,6 +54,7 @@ function getBadge(percentage: number): {
       glow: "shadow-[0_0_30px_rgba(34,211,238,0.35)]",
     };
   }
+
   if (percentage >= 50) {
     return {
       label: "Average",
@@ -58,6 +62,7 @@ function getBadge(percentage: number): {
       glow: "shadow-[0_0_30px_rgba(250,204,21,0.35)]",
     };
   }
+
   return {
     label: "Needs Improvement",
     color: "text-red-400",
@@ -88,11 +93,15 @@ export default function TrainingPage() {
 
   const progressPercent = useMemo(() => {
     if (quizQuestions.length === 0) return 0;
-    return Math.round(((current + (selected ? 1 : 0)) / quizQuestions.length) * 100);
+
+    return Math.round(
+      ((current + (selected ? 1 : 0)) / quizQuestions.length) * 100
+    );
   }, [current, selected, quizQuestions.length]);
 
   const finalPercentage = useMemo(() => {
     if (quizQuestions.length === 0) return 0;
+
     return Math.round((score / quizQuestions.length) * 100);
   }, [score, quizQuestions.length]);
 
@@ -106,22 +115,22 @@ export default function TrainingPage() {
           "Enable Two-Factor Authentication everywhere.",
         ]
       : finalPercentage >= 70
-      ? [
-          "Good awareness.",
-          "Double-check unknown payment requests.",
-          "Verify every banking message.",
-        ]
-      : finalPercentage >= 50
-      ? [
-          "Practice more phishing examples.",
-          "Avoid shortened URLs.",
-          "Never share OTP or UPI PIN.",
-        ]
-      : [
-          "Complete this training again.",
-          "Never trust urgent banking alerts.",
-          "Always verify before making payments.",
-        ];
+        ? [
+            "Good awareness.",
+            "Double-check unknown payment requests.",
+            "Verify every banking message.",
+          ]
+        : finalPercentage >= 50
+          ? [
+              "Practice more phishing examples.",
+              "Avoid shortened URLs.",
+              "Never share OTP or UPI PIN.",
+            ]
+          : [
+              "Complete this training again.",
+              "Never trust urgent banking alerts.",
+              "Always verify before making payments.",
+            ];
 
   const weakTopics = answered
     .filter((item) => !item.isCorrect)
@@ -136,13 +145,23 @@ export default function TrainingPage() {
     .slice(0, 3);
 
   const circleCircumference = 2 * Math.PI * 70;
+
   const circleOffset =
-    circleCircumference - (finalPercentage / 100) * circleCircumference;
+    circleCircumference -
+    (finalPercentage / 100) * circleCircumference;
 
   function handleStart(): void {
-    const pool = trainingQuestions.filter((q) => q.difficulty === difficulty);
-    const sourcePool = pool.length >= TOTAL_QUESTIONS ? pool : trainingQuestions;
-    const shuffled = shuffleArray(sourcePool).slice(0, TOTAL_QUESTIONS);
+    const pool = trainingQuestions.filter(
+      (q) => q.difficulty === difficulty
+    );
+
+    const sourcePool =
+      pool.length >= TOTAL_QUESTIONS ? pool : trainingQuestions;
+
+    const shuffled = shuffleArray(sourcePool).slice(
+      0,
+      TOTAL_QUESTIONS
+    );
 
     setQuizQuestions(shuffled);
     setCurrent(0);
@@ -156,6 +175,7 @@ export default function TrainingPage() {
     if (selected !== null || !question) return;
 
     const isCorrect = option === question.answer;
+
     setSelected(option);
 
     if (isCorrect) {
@@ -164,7 +184,11 @@ export default function TrainingPage() {
 
     setAnswered((prev) => [
       ...prev,
-      { question, selected: option, isCorrect },
+      {
+        question,
+        selected: option,
+        isCorrect,
+      },
     ]);
   }
 
@@ -190,12 +214,17 @@ export default function TrainingPage() {
     const loadImageBase64 = (src: string): Promise<string> => {
       return new Promise((resolve, reject) => {
         const img = new Image();
+
         img.crossOrigin = "Anonymous";
+
         img.onload = () => {
           const canvas = document.createElement("canvas");
+
           canvas.width = img.naturalWidth || img.width;
           canvas.height = img.naturalHeight || img.height;
+
           const ctx = canvas.getContext("2d");
+
           if (ctx) {
             ctx.drawImage(img, 0, 0);
             resolve(canvas.toDataURL("image/png"));
@@ -203,19 +232,34 @@ export default function TrainingPage() {
             reject(new Error("Canvas context unavailable"));
           }
         };
+
         img.onerror = (err) => reject(err);
         img.src = src;
       });
     };
 
     try {
-      const bgDataUrl = await loadImageBase64("/certificate/certificate_template.png");
-      doc.addImage(bgDataUrl, "PNG", 0, 0, pageWidth, pageHeight);
+      const bgDataUrl = await loadImageBase64(
+        "/certificate/certificate_template.png"
+      );
+
+      doc.addImage(
+        bgDataUrl,
+        "PNG",
+        0,
+        0,
+        pageWidth,
+        pageHeight
+      );
     } catch (error) {
-      console.error("Failed to load certificate background template:", error);
+      console.error(
+        "Failed to load certificate background template:",
+        error
+      );
     }
 
     let rank = "Needs Improvement";
+
     if (finalPercentage >= 90) {
       rank = "Elite Cyber Guardian";
     } else if (finalPercentage >= 80) {
@@ -224,47 +268,88 @@ export default function TrainingPage() {
       rank = "Scam Spotter";
     }
 
-    const randomDigits = Math.floor(100000 + Math.random() * 900000);
+    const randomDigits = Math.floor(
+      100000 + Math.random() * 900000
+    );
+
     const certId = `SSAI-2026-${randomDigits}`;
+
     const currentDate = new Date().toLocaleDateString();
-    
-    // Safely check if 'user' is present in scope/context
-    const recipientName =
-      typeof user !== "undefined" && (user as { full_name?: string })?.full_name
-        ? (user as { full_name: string }).full_name
-        : "Participant";
-    
+
+    // User variable removed because it was not defined in this page.
+    const recipientName = "Participant";
+
     const totalQuestions = quizQuestions.length || 10;
 
     doc.setFont("times", "bold");
     doc.setFontSize(30);
     doc.setTextColor(11, 18, 32);
-    doc.text(recipientName, pageWidth / 2, 82, { align: "center" });
+
+    doc.text(
+      recipientName,
+      pageWidth / 2,
+      82,
+      {
+        align: "center",
+      }
+    );
 
     doc.setFont("helvetica", "bold");
     doc.setFontSize(20);
     doc.setTextColor(212, 175, 55);
-    doc.text(rank, pageWidth / 2, 105, { align: "center" });
+
+    doc.text(
+      rank,
+      pageWidth / 2,
+      105,
+      {
+        align: "center",
+      }
+    );
 
     doc.setFont("helvetica", "bold");
     doc.setFontSize(14);
     doc.setTextColor(11, 18, 32);
-    doc.text(`${score} / ${totalQuestions}`, 75, 123, {
-  align: "center",
-});
-    doc.text(`${finalPercentage}%`, 148, 123, {
-  align: "center",
-});
+
+    doc.text(
+      `${score} / ${totalQuestions}`,
+      75,
+      123,
+      {
+        align: "center",
+      }
+    );
+
+    doc.text(
+      `${finalPercentage}%`,
+      148,
+      123,
+      {
+        align: "center",
+      }
+    );
 
     doc.setFont("helvetica", "normal");
     doc.setFontSize(11);
     doc.setTextColor(11, 18, 32);
-    doc.text(currentDate, 92, 158, {
-  align: "center",
-});
-    doc.text(certId, 208, 158, {
-  align: "center",
-});
+
+    doc.text(
+      currentDate,
+      92,
+      158,
+      {
+        align: "center",
+      }
+    );
+
+    doc.text(
+      certId,
+      208,
+      158,
+      {
+        align: "center",
+      }
+    );
 
     doc.save("SpamShield-Certificate.pdf");
   };
@@ -308,7 +393,10 @@ export default function TrainingPage() {
                     target you.
                   </p>
 
-                  <button className="btn-primary mt-6" onClick={handleStart}>
+                  <button
+                    className="btn-primary mt-6"
+                    onClick={handleStart}
+                  >
                     <Play size={18} />
                     Start Training
                   </button>
@@ -322,29 +410,37 @@ export default function TrainingPage() {
             </div>
 
             <div className="card p-6">
-              <h2 className="text-xl font-semibold mb-4">Select Difficulty</h2>
+              <h2 className="text-xl font-semibold mb-4">
+                Select Difficulty
+              </h2>
 
               <div className="flex gap-4 flex-wrap">
-                {(["Easy", "Medium", "Hard"] as Difficulty[]).map((item) => (
-                  <button
-                    key={item}
-                    onClick={() => setDifficulty(item)}
-                    className={`px-6 py-3 rounded-xl border transition-all duration-200 font-medium ${
-                      difficulty === item
-                        ? "bg-yellow-500 text-black border-yellow-500 shadow-[0_0_20px_rgba(250,204,21,0.4)]"
-                        : "border-fog-400/20 hover:border-yellow-500 hover:bg-yellow-500/5"
-                    }`}
-                  >
-                    {item}
-                  </button>
-                ))}
+                {(["Easy", "Medium", "Hard"] as Difficulty[]).map(
+                  (item) => (
+                    <button
+                      key={item}
+                      onClick={() => setDifficulty(item)}
+                      className={`px-6 py-3 rounded-xl border transition-all duration-200 font-medium ${
+                        difficulty === item
+                          ? "bg-yellow-500 text-black border-yellow-500 shadow-[0_0_20px_rgba(250,204,21,0.4)]"
+                          : "border-fog-400/20 hover:border-yellow-500 hover:bg-yellow-500/5"
+                      }`}
+                    >
+                      {item}
+                    </button>
+                  )
+                )}
               </div>
             </div>
 
             <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-5">
               <div className="card p-5 hover:border-cyan-400/40 transition-all duration-200 hover:-translate-y-1">
                 <Brain className="text-cyan-400 mb-4" />
-                <h3 className="font-semibold text-lg">AI Scenarios</h3>
+
+                <h3 className="font-semibold text-lg">
+                  AI Scenarios
+                </h3>
+
                 <p className="text-fog-400 mt-2 text-sm">
                   Practice using realistic cyber scam examples.
                 </p>
@@ -352,7 +448,11 @@ export default function TrainingPage() {
 
               <div className="card p-5 hover:border-green-400/40 transition-all duration-200 hover:-translate-y-1">
                 <GraduationCap className="text-green-400 mb-4" />
-                <h3 className="font-semibold text-lg">Learn Instantly</h3>
+
+                <h3 className="font-semibold text-lg">
+                  Learn Instantly
+                </h3>
+
                 <p className="text-fog-400 mt-2 text-sm">
                   AI explains why every answer is correct or wrong.
                 </p>
@@ -360,7 +460,11 @@ export default function TrainingPage() {
 
               <div className="card p-5 hover:border-blue-400/40 transition-all duration-200 hover:-translate-y-1">
                 <CheckCircle className="text-blue-400 mb-4" />
-                <h3 className="font-semibold text-lg">Real Examples</h3>
+
+                <h3 className="font-semibold text-lg">
+                  Real Examples
+                </h3>
+
                 <p className="text-fog-400 mt-2 text-sm">
                   Emails, SMS, URLs, QR Codes and fake banking alerts.
                 </p>
@@ -368,7 +472,11 @@ export default function TrainingPage() {
 
               <div className="card p-5 hover:border-yellow-400/40 transition-all duration-200 hover:-translate-y-1">
                 <Trophy className="text-yellow-500 mb-4" />
-                <h3 className="font-semibold text-lg">Awareness Score</h3>
+
+                <h3 className="font-semibold text-lg">
+                  Awareness Score
+                </h3>
+
                 <p className="text-fog-400 mt-2 text-sm">
                   Get your Cyber Awareness Score after training.
                 </p>
@@ -384,6 +492,7 @@ export default function TrainingPage() {
                 <span className="text-sm font-medium text-fog-400">
                   Question {current + 1} of {quizQuestions.length}
                 </span>
+
                 <span className="text-sm font-semibold text-yellow-400">
                   Score: {score}
                 </span>
@@ -392,7 +501,9 @@ export default function TrainingPage() {
               <div className="w-full h-2 bg-fog-400/10 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-gradient-to-r from-cyan-400 to-yellow-400 rounded-full transition-all duration-500 ease-out"
-                  style={{ width: `${progressPercent}%` }}
+                  style={{
+                    width: `${progressPercent}%`,
+                  }}
                 />
               </div>
             </div>
@@ -402,6 +513,7 @@ export default function TrainingPage() {
                 <span className="px-3 py-1 rounded-full text-xs font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
                   {question.type}
                 </span>
+
                 <span className="px-3 py-1 rounded-full text-xs font-semibold bg-fog-400/10 text-fog-400 border border-fog-400/20">
                   {question.difficulty}
                 </span>
@@ -418,14 +530,20 @@ export default function TrainingPage() {
                   className={`flex items-center justify-center gap-2 px-6 py-4 rounded-xl border-2 font-semibold text-lg transition-all duration-200 ${
                     selected === null
                       ? "border-green-500/30 text-green-400 hover:bg-green-500/10 hover:border-green-500 hover:-translate-y-0.5"
-                      : selected === "Safe" && question.answer === "Safe"
-                      ? "border-green-500 bg-green-500/20 text-green-300"
-                      : selected === "Safe" && question.answer !== "Safe"
-                      ? "border-red-500 bg-red-500/20 text-red-300"
-                      : question.answer === "Safe"
-                      ? "border-green-500 bg-green-500/10 text-green-300"
-                      : "border-fog-400/10 text-fog-400/40"
-                  } ${selected !== null ? "cursor-not-allowed" : "cursor-pointer"}`}
+                      : selected === "Safe" &&
+                          question.answer === "Safe"
+                        ? "border-green-500 bg-green-500/20 text-green-300"
+                        : selected === "Safe" &&
+                            question.answer !== "Safe"
+                          ? "border-red-500 bg-red-500/20 text-red-300"
+                          : question.answer === "Safe"
+                            ? "border-green-500 bg-green-500/10 text-green-300"
+                            : "border-fog-400/10 text-fog-400/40"
+                  } ${
+                    selected !== null
+                      ? "cursor-not-allowed"
+                      : "cursor-pointer"
+                  }`}
                 >
                   <CheckCircle size={20} />
                   Safe
@@ -437,14 +555,20 @@ export default function TrainingPage() {
                   className={`flex items-center justify-center gap-2 px-6 py-4 rounded-xl border-2 font-semibold text-lg transition-all duration-200 ${
                     selected === null
                       ? "border-red-500/30 text-red-400 hover:bg-red-500/10 hover:border-red-500 hover:-translate-y-0.5"
-                      : selected === "Scam" && question.answer === "Scam"
-                      ? "border-green-500 bg-green-500/20 text-green-300"
-                      : selected === "Scam" && question.answer !== "Scam"
-                      ? "border-red-500 bg-red-500/20 text-red-300"
-                      : question.answer === "Scam"
-                      ? "border-green-500 bg-green-500/10 text-green-300"
-                      : "border-fog-400/10 text-fog-400/40"
-                  } ${selected !== null ? "cursor-not-allowed" : "cursor-pointer"}`}
+                      : selected === "Scam" &&
+                          question.answer === "Scam"
+                        ? "border-green-500 bg-green-500/20 text-green-300"
+                        : selected === "Scam" &&
+                            question.answer !== "Scam"
+                          ? "border-red-500 bg-red-500/20 text-red-300"
+                          : question.answer === "Scam"
+                            ? "border-green-500 bg-green-500/10 text-green-300"
+                            : "border-fog-400/10 text-fog-400/40"
+                  } ${
+                    selected !== null
+                      ? "cursor-not-allowed"
+                      : "cursor-pointer"
+                  }`}
                 >
                   <XCircle size={20} />
                   Scam
@@ -461,10 +585,17 @@ export default function TrainingPage() {
                     }`}
                   >
                     {selected === question.answer ? (
-                      <CheckCircle className="text-green-400 shrink-0" size={22} />
+                      <CheckCircle
+                        className="text-green-400 shrink-0"
+                        size={22}
+                      />
                     ) : (
-                      <XCircle className="text-red-400 shrink-0" size={22} />
+                      <XCircle
+                        className="text-red-400 shrink-0"
+                        size={22}
+                      />
                     )}
+
                     <p className="font-semibold">
                       {selected === question.answer
                         ? "Correct! "
@@ -485,11 +616,16 @@ export default function TrainingPage() {
 
                   <div className="card p-5 bg-cyan-500/5 border border-cyan-500/20">
                     <div className="flex items-center gap-2 mb-2">
-                      <Brain size={18} className="text-cyan-400" />
+                      <Brain
+                        size={18}
+                        className="text-cyan-400"
+                      />
+
                       <h4 className="font-semibold text-cyan-400">
                         AI Explanation
                       </h4>
                     </div>
+
                     <p className="text-fog-400 text-sm leading-6">
                       {question.explanation}
                     </p>
@@ -498,20 +634,27 @@ export default function TrainingPage() {
                   {question.threatIndicators.length > 0 && (
                     <div className="card p-5 bg-yellow-500/5 border border-yellow-500/20">
                       <div className="flex items-center gap-2 mb-3">
-                        <AlertTriangle size={18} className="text-yellow-400" />
+                        <AlertTriangle
+                          size={18}
+                          className="text-yellow-400"
+                        />
+
                         <h4 className="font-semibold text-yellow-400">
                           Threat Indicators
                         </h4>
                       </div>
+
                       <div className="flex flex-wrap gap-2">
-                        {question.threatIndicators.map((indicator) => (
-                          <span
-                            key={indicator}
-                            className="px-3 py-1.5 rounded-lg text-xs font-medium bg-yellow-500/10 text-yellow-300 border border-yellow-500/20"
-                          >
-                            {indicator}
-                          </span>
-                        ))}
+                        {question.threatIndicators.map(
+                          (indicator) => (
+                            <span
+                              key={indicator}
+                              className="px-3 py-1.5 rounded-lg text-xs font-medium bg-yellow-500/10 text-yellow-300 border border-yellow-500/20"
+                            >
+                              {indicator}
+                            </span>
+                          )
+                        )}
                       </div>
                     </div>
                   )}
@@ -523,6 +666,7 @@ export default function TrainingPage() {
                     {current + 1 < quizQuestions.length
                       ? "Next Question"
                       : "View Results"}
+
                     <ChevronRight size={18} />
                   </button>
                 </div>
@@ -547,7 +691,10 @@ export default function TrainingPage() {
               </h2>
 
               <div className="relative w-48 h-48 mb-8 z-10">
-                <svg className="w-full h-full -rotate-90" viewBox="0 0 160 160">
+                <svg
+                  className="w-full h-full -rotate-90"
+                  viewBox="0 0 160 160"
+                >
                   <circle
                     cx="80"
                     cy="80"
@@ -557,6 +704,7 @@ export default function TrainingPage() {
                     strokeWidth="12"
                     className="text-fog-400/10"
                   />
+
                   <circle
                     cx="80"
                     cy="80"
@@ -570,10 +718,12 @@ export default function TrainingPage() {
                     className={`${badge.color} transition-all duration-1000 ease-out`}
                   />
                 </svg>
+
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
                   <span className="text-4xl font-bold">
                     {finalPercentage}%
                   </span>
+
                   <span className="text-sm text-fog-400 mt-1">
                     {score}/{quizQuestions.length} Correct
                   </span>
@@ -639,7 +789,10 @@ export default function TrainingPage() {
                       className="flex items-center justify-between rounded-xl border border-yellow-500/20 bg-yellow-500/5 p-4"
                     >
                       <div>
-                        <p className="font-semibold">{topic}</p>
+                        <p className="font-semibold">
+                          {topic}
+                        </p>
+
                         <p className="text-sm text-fog-400">
                           Incorrect Answers: {count}
                         </p>
@@ -655,7 +808,10 @@ export default function TrainingPage() {
             </div>
 
             <div className="card p-6">
-              <h3 className="text-xl font-semibold mb-5">Question Review</h3>
+              <h3 className="text-xl font-semibold mb-5">
+                Question Review
+              </h3>
+
               <div className="space-y-3">
                 {answered.map((record, index) => (
                   <div
@@ -677,18 +833,24 @@ export default function TrainingPage() {
                         className="text-red-400 shrink-0 mt-0.5"
                       />
                     )}
+
                     <div className="flex-1">
                       <p className="text-sm font-medium text-fog-400 mb-1">
-                        Question {index + 1} • {record.question.type}
+                        Question {index + 1} •{" "}
+                        {record.question.type}
                       </p>
+
                       <p className="text-sm leading-6">
                         {record.question.question}
                       </p>
+
                       <p className="text-xs text-fog-400 mt-2">
                         Your answer:{" "}
                         <span
                           className={
-                            record.isCorrect ? "text-green-300" : "text-red-300"
+                            record.isCorrect
+                              ? "text-green-300"
+                              : "text-red-300"
                           }
                         >
                           {record.selected}
